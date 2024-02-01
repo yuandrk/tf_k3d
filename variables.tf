@@ -6,11 +6,16 @@ variable "GITHUB_OWNER" {
 
 variable "FLUX_GITHUB_REPO" {
   description = "GitHub repository name"
-  default     = "sbot-flux-config"
+  default     = "multicluster"
   type        = string
 }
 
 variable "GITHUB_TOKEN" {
   sensitive = true
   type      = string
+}
+
+variable "CLUSTER_NAME" {
+  default = "dev"
+  type    = string
 }

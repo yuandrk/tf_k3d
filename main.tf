@@ -27,7 +27,7 @@ resource "null_resource" "kubeconfig" {
   depends_on = [k3d_cluster.dev]
 
   provisioner "local-exec" {
-    command = "k3d kubeconfig write ${k3d_cluster.dev.name} > ${path.module}/kubeconfig"
+    command = "cat $(k3d kubeconfig write ${k3d_cluster.dev.name}) > ${path.module}/kubeconfig"
   }
 }
 
@@ -45,6 +45,6 @@ provider "flux" {
 }
 
 resource "flux_bootstrap_git" "this" {
-  path = "staging-cluster"
+  path = "clusters/${var.CLUSTER_NAME}"
 }
 
