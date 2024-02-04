@@ -12,7 +12,6 @@ terraform {
 }
 
 provider "k3d" {
-  # Конфігурація провайдера k3d
 }
 
 resource "k3d_cluster" "dev" {
@@ -22,18 +21,21 @@ resource "k3d_cluster" "dev" {
 
 
 }
-
 resource "null_resource" "kubeconfig" {
   depends_on = [k3d_cluster.dev]
-
   provisioner "local-exec" {
     command = "cat $(k3d kubeconfig write ${k3d_cluster.dev.name}) > ${path.module}/kubeconfig"
   }
 }
 
+data "local_file" "kubeconfig" {
+  depends_on = [null_resource.kubeconfig]
+  filename   = "${path.module}/kubeconfig"
+}
+
 provider "flux" {
   kubernetes = {
-      config_path = "${path.module}/kubeconfig"
+      config_path = data.local_file.kubeconfig.filename
   }
   git = {
     url  = "https://github.com/${var.GITHUB_OWNER}/${var.FLUX_GITHUB_REPO}.git"
